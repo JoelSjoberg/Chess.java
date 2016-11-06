@@ -10,13 +10,14 @@ public class Logic {
 	private static int cells;
 	
 	private static void printGrid(){
-		// uppdate the whole grid before printing
+		// update the whole grid before printing
 		for(int i = 0; i < grid.length; i++){
 			if(grid[i] != null && grid[i].getPosition() != i){
 				grid[grid[i].getPosition()] = grid[i];
 				grid[i] = null;
 			}
 		}
+		
 		// print the game board and pieces
 		for(int i = 0; i < grid.length; i++){
 			if(i % 8 == 0){
@@ -50,6 +51,7 @@ public class Logic {
 		}
 	}
 	
+	// Take input from the player, variables needed for value controll
 	static Scanner userInput = new Scanner(System.in);
 	static int pos, dest;
 	private static void getPlayerMove(){
@@ -65,21 +67,40 @@ public class Logic {
 			if(!playerPieces.contains(grid[pos]))
 				throw new NullPointerException();
 			
+			// if there are no available moves: loop
+			if(grid[pos].getValidMoves(grid).size() == 0)throw new ArrayIndexOutOfBoundsException();
+
 			// Get the destination of the selected piece
 			System.out.println("Avaliable moves are: " + grid[pos].getValidMoves(grid));
 			System.out.print("Enter piece destination: ");
 			dest = Integer.parseInt(userInput.next());
-			if(!(grid[pos].getValidMoves(grid).contains(dest)))
-				throw new NullPointerException();
+			
+			// if the input destination is not in the available moves: loop
+			if(!(grid[pos].getValidMoves(grid).contains(dest)))throw new NullPointerException();
+			
 		}catch(NullPointerException e){
 			System.out.println("Invalid move! Pick again");
 			getPlayerMove();
-		}catch(NumberFormatException e){
-			System.out.println("Invalid move! Pick again");
+		}catch(NumberFormatException e1){
+			System.out.println("Invalid input type! Pick again");
+			getPlayerMove();
+		}catch(ArrayIndexOutOfBoundsException e2){
+			System.out.println("This piece cannot move any further");
 			getPlayerMove();
 		}
 		grid[pos].makeMove(dest);
-	}
+		// if an enemy is at the destination, remove it
+		if(grid[dest] != null && grid[dest].getType() == 0){
+			enemyPieces.remove(grid[dest]);
+		}
+	}// end of getPLayerMove()
+	
+	// the AI controll
+	private void getCompMove(){
+		
+		
+		
+	}// end of getCompMove()
 	
 	// game will run here
 	private static void beginGame(){
