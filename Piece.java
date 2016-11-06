@@ -15,4 +15,5 @@ public interface Piece<T> {
 	void makeMove(int position);
 	int getType();
 	int getPosition();
+	void setPosition(int pos);
 }
