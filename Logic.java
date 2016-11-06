@@ -1,8 +1,12 @@
+import java.awt.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Logic {
 	
 	private static Piece[] grid;
+	static ArrayList<Piece> playerPieces, enemyPieces;
 	private static int cells;
 	
 	private static void printGrid(){
@@ -30,44 +34,67 @@ public class Logic {
 	
 	// fill the grid with pieces at the beginning of the game
 	private static void fillGrid(){
+		Peasant p;
 		for(int i = 0; i < grid.length; i++){
-			System.out.println(i >= (cells * 6) - 1 && i < (cells * 7));
-			if(i <= (cells * 2) - 1 && i >= cells ||
-			   i >= (cells * 6) && i <= (cells * 7) - 1 ){
+			if(i <= (cells * 2) - 1 && i >= cells || i >= (cells * 6) && i <= (cells * 7) - 1 ){
 				if(i < grid.length / 2){
-					grid[i] = new Peasant(cells, i, 0);					
+					p = new Peasant(cells, i, 0);
+					grid[i] = p;
+					enemyPieces.add(p);
 				}else if(i > grid.length / 2){
-					System.out.println("true");
-					grid[i] = new Peasant(cells, i, 1);
+					p = new Peasant(cells, i, 1);
+					grid[i] = p;
+					playerPieces.add(p);
 				}
 			}
 		}
 	}
 	
-	// game will run here
-	private static void beginGame(){
-		fillGrid();
-	}
-	
 	static Scanner userInput = new Scanner(System.in);
 	static int pos, dest;
 	private static void getPlayerMove(){
-		System.out.print("Enter piece position");
-		pos = Integer.parseInt(userInput.next());
-		System.out.println("Avaliable moves are: " + grid[pos].getValidMoves(grid));
-		System.out.print("Enter piece destination");
-		dest = Integer.parseInt(userInput.next());
-		
+		try{
+			// show the available options and get the selected piece
+			System.out.print("Available options: ");
+			for(int i = 0; i < playerPieces.size(); i++){
+				System.out.print(playerPieces.get(i).getPosition() + ", ");
+			}
+			System.out.println();
+			System.out.print("Enter piece position: ");
+			pos = Integer.parseInt(userInput.next());
+			if(!playerPieces.contains(grid[pos]))
+				throw new NullPointerException();
+			
+			// Get the destination of the selected piece
+			System.out.println("Avaliable moves are: " + grid[pos].getValidMoves(grid));
+			System.out.print("Enter piece destination: ");
+			dest = Integer.parseInt(userInput.next());
+			if(!(grid[pos].getValidMoves(grid).contains(dest)))
+				throw new NullPointerException();
+		}catch(NullPointerException e){
+			System.out.println("Invalid move! Pick again");
+			getPlayerMove();
+		}catch(NumberFormatException e){
+			System.out.println("Invalid move! Pick again");
+			getPlayerMove();
+		}
 		grid[pos].makeMove(dest);
+	}
+	
+	// game will run here
+	private static void beginGame(){
+		fillGrid();
+		while(true){
+			printGrid();
+			getPlayerMove();
+		}
 	}
 	
 	public static void main(String args[]){
 		cells = 8;
 		grid = new Piece[cells*cells];
-		
-		fillGrid();
-		printGrid();
-		getPlayerMove();
-		printGrid();
+		playerPieces = new ArrayList<Piece>();
+		enemyPieces = new  ArrayList<Piece>();
+		beginGame();
 	}
 }

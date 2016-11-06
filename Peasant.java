@@ -20,7 +20,8 @@ public class Peasant implements Piece{
 	@Override
 	// this is where "type" is essential to see if there is an ally or an enemy
 	public boolean isEnemyAt(int position, Piece[] board) {
-		if(board[position - cells - 1].getType() != type) return true;
+		if(board[position] != null &&
+				board[position].getType() != type) return true;			
 		return false;
 	}
 	
@@ -29,26 +30,21 @@ public class Peasant implements Piece{
 		
 		List<Integer> availableMoves = new ArrayList<Integer>();
 		// can take one step by default
-		availableMoves.add(position - cells);
+		if(!(isEnemyAt((position - cells), board))){
+			availableMoves.add(position - cells);
+		}
 		// peasant can move 2 steps the first move
-		if(timesMoved == 0){
+		if(timesMoved == 0 && !(isEnemyAt((position - (cells * 2)), board))){
 			availableMoves.add(position - (cells * 2));
 		}
-		
 		// if there is an opponent to the upper left or right, you can kill it
 		// and check edge cases!(try in case of empty squares).
-		try{
-			if(isEnemyAt(position - cells - 1, board) && position % cells != 0){
-				availableMoves.add(position - cells - 1);
-			}
-			
-			if(isEnemyAt(position - cells + 1, board) && position % (cells-1) != 0){
-				availableMoves.add(position - cells + 1);
-			}			
-		}catch(NullPointerException e){
-			
+		if(isEnemyAt((position - cells - 1), board) && position % cells != 0){
+			availableMoves.add(position - cells - 1);
 		}
-		
+		if(isEnemyAt((position - cells + 1), board) && position % (cells-1) != 0){
+			availableMoves.add(position - cells + 1);
+		}			
 		return availableMoves;
 	}
 
@@ -62,6 +58,7 @@ public class Peasant implements Piece{
 	public int getType() {
 		return type;
 	}
+	
 	@Override
 	public String toString(){
 		//return "Peasant at: " + position;
@@ -72,5 +69,4 @@ public class Peasant implements Piece{
 	public int getPosition() {
 		return this.position;
 	}
-	
 }
