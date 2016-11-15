@@ -1,4 +1,5 @@
-import java.util.Collection;
+
+import java.util.ArrayList;
 
 /**
  * Breaking ISP:
@@ -11,8 +12,8 @@ import java.util.Collection;
 
 public interface Piece<T> {
 	boolean isEnemyAt(int position, Piece[] board);
-	Collection<T> getValidMoves(Piece[] board);
-	void makeMove(int position);
+	ArrayList<T> getValidMoves(Piece[] board);
+	void makeMove(int destination);
 	int getType();
 	int getPosition();
 	void setPosition(int pos);
