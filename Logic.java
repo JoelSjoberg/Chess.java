@@ -2,12 +2,13 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
-public class Logic {
+public class Logic{
 	
 	private static Piece[] grid;
 	static ArrayList<Piece> playerPieces;
 	static ArrayList<Piece> enemyPieces;
 	private static int cells;
+	private static Frame frame;
 	
 	private static void printGrid(){
 		// update the whole grid before printing
@@ -205,8 +206,10 @@ public class Logic {
 		fillGrid();
 		while(true){
 			printGrid();
+			frame.setBoard(grid);
+			frame.repaint();
+			frame.revalidate();
 			getPlayerMove();
-			//userInput.nextLine();
 			printGrid();
 			getCompMove();
 		}
@@ -217,6 +220,7 @@ public class Logic {
 		grid = new Piece[cells*cells];
 		playerPieces = new ArrayList<Piece>();
 		enemyPieces = new  ArrayList<Piece>();
+		frame = new Frame(cells, grid);
 		beginGame();
 	}
 }
