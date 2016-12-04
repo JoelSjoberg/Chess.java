@@ -1,4 +1,9 @@
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
 
 public class Peasant implements Piece<Object>{
 	
@@ -6,6 +11,8 @@ public class Peasant implements Piece<Object>{
 	private int position;
 	private int cells;
 	private int type;
+	private Image ally;
+	private Image enemy;
 	
 	
 	public Peasant(int c, int pos, int t){
@@ -13,6 +20,17 @@ public class Peasant implements Piece<Object>{
 		cells = c;
 		position = pos;
 		type = t;
+		try {
+			ally = ImageIO.read(new File("src/img/peasanta.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			enemy = ImageIO.read(new File("src/img/peasante.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	@Override
@@ -32,28 +50,30 @@ public class Peasant implements Piece<Object>{
 		
 		ArrayList<Integer> availableMoves = new ArrayList<Integer>();
 		
-		// reminder: type = 1 : ally
-		if(this.type == 1){
-			// can take one step by default if no piece is in the way
-			if(board[position - cells] == null){
+							// reminder: type = 1 : ally
+		if (this.type == 1){
+							// can take one step by default if no piece is in the way
+			if (board[position - cells] == null){
 				availableMoves.add(position - cells);
 			}
-			// peasant can move 2 steps the first move if no piece is in the way
-			if(timesMoved == 0 && board[position - (cells * 2)] == null){
+							// peasant can move 2 steps the first move if no piece is in the way
+			if (timesMoved == 0 && board[position - cells] == null && board[position - (cells * 2)] == null){
 				availableMoves.add(position - (cells * 2));
 			}
-			// if there is an opponent to the upper left or right, you can kill it
-			// and check edge cases!
-			if(isEnemyAt((position - cells - 1), board) && position % cells != 0){
+							// if there is an opponent to the upper left or right, you can kill it
+							// and check edge cases!
+			if (isEnemyAt((position - cells - 1), board) && position % cells != 0){
 				availableMoves.add(position - cells - 1);
 			}
-			if(isEnemyAt((position - cells + 1), board) && position % (cells-1) != 0){
+// TODO: the edge case: position % (cells-1) != 0 doesn't work = math is wrong!
+			//if (isEnemyAt((position - cells + 1), board) && position % (cells-1) != 0){
+			if (isEnemyAt((position - cells + 1), board) &&
+					position != (int)(position / cells) * cells + cells - 1){
 				availableMoves.add(position - cells + 1);
 			}
-			
-			// catch edge cases if the piece wants to jump outside of the board!
-			for(int i = availableMoves.size() - 1; i > -1; i--){
-				if(availableMoves.get(i) >= board.length || availableMoves.get(i) < 0){
+							// catch edge cases if the piece wants to jump outside of the board!
+			for (int i = availableMoves.size() - 1; i > -1; i--){
+				if (availableMoves.get(i) >= board.length || availableMoves.get(i) < 0){
 					availableMoves.remove(i);
 				}
 			}
@@ -61,26 +81,28 @@ public class Peasant implements Piece<Object>{
 		}
 		
 		else if(this.type == 0){
-			// enemy Peasant (type = 0)
-			// can take one step by default if no piece is in the way
-			if(board[position + cells] == null){
+							// enemy Peasant (type = 0)
+							// can take one step by default if no piece is in the way
+			if (board[position + cells] == null){
 				availableMoves.add(position + cells);
 			}
-			// peasant can move 2 steps the first move if no piece is in the way
-			if((timesMoved == 0 && board[position + (cells * 2)] == null) && board[position + cells] == null){
+							// peasant can move 2 steps the first move if no piece is in the way
+			if ((timesMoved == 0 && board[position + (cells * 2)] == null) && board[position + cells] == null){
 				availableMoves.add(position + (cells * 2));
 			}
-			// if there is an opponent to the lower left or right, you can kill it
-			// and check edge cases!
-			if(isEnemyAt((position + cells - 1), board) && position % cells != 0){
+							// if there is an opponent to the lower left or right, you can kill it
+							// and check edge cases!
+			if (isEnemyAt((position + cells - 1), board) && position % cells != 0){
 				availableMoves.add(position + cells - 1);
 			}
-			if(isEnemyAt((position + cells + 1), board) && position % (cells-1) != 0){
+// TODO: the edge case: position % (cells-1) != 0 doesn't work = math is wrong!
+			if (isEnemyAt((position + cells + 1), board) &&
+					position != (int)(position / cells) * cells + cells - 1){
 				availableMoves.add(position + cells + 1);
 			}
-			// catch edge cases if the piece wants to jump outside of the board!
-			for(int i = availableMoves.size() - 1; i > -1; i--){
-				if(availableMoves.get(i) >= board.length || availableMoves.get(i) < 0){
+							// catch edge cases if the piece wants to jump outside of the board!
+			for (int i = availableMoves.size() - 1; i > -1; i--){
+				if (availableMoves.get(i) >= board.length || availableMoves.get(i) < 0){
 					availableMoves.remove(i);
 				}
 			}
@@ -99,9 +121,9 @@ public class Peasant implements Piece<Object>{
 		return type;
 	}
 	
+	
 	@Override
 	public String toString(){
-		//return "Peasant at: " + position;
 		if(this.type == 1)return "i" ;
 		else return "I";
 	}
@@ -112,5 +134,13 @@ public class Peasant implements Piece<Object>{
 	}
 	public void setPosition(int pos){
 		this.position = pos;
+	}
+	
+	public Image getImage(){
+		if(this.type == 1){
+			return this.ally;
+		}else{
+			return this.enemy;
+		}
 	}
 }

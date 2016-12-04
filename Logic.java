@@ -1,6 +1,8 @@
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Scanner;
 
 public class Logic{
 	
@@ -9,8 +11,13 @@ public class Logic{
 	static ArrayList<Piece> enemyPieces;
 	private static int cells;
 	private static Frame frame;
+	private static int x, y, index;
+	private static Keyboard key = new Keyboard();
+	static Random rand = new Random();
+	static int pos = -1, dest = -1;
+	static boolean checker;
 	
-	private static void printGrid(){
+	private static void updateGrid(){
 		// update the whole grid before printing
 		for(int i = 0; i < grid.length; i++){
 			if(grid[i] != null && grid[i].getPosition() != i){
@@ -18,30 +25,51 @@ public class Logic{
 				grid[i] = null;
 			}
 		}
-		
-		// print the game board and pieces
-		for(int i = 0; i < grid.length; i++){
-			if(i % 8 == 0){
-				System.out.println();
-			}
-			if(grid[i] != null){
-				System.out.print("|"+grid[i]+"|");				
-			}else{
-				System.out.print("|_|");
-			}
-		}
-		System.out.println();
-		System.out.println("________________________");
 	}
 	
 	// fill the grid with pieces at the beginning of the game
 	private static void fillGrid(){
-		Peasant p;
+		enemyPieces = new ArrayList<Piece>();
+		playerPieces = new ArrayList<Piece>();
+		Piece p;
+														// Enemy pieces
+		// Tower
+		p = new Tower(cells, 0, 0);
+		grid[0] = p;
+		enemyPieces.add(p);
+		p = new Tower(cells, 7, 0);
+		grid[7] = p;
+		enemyPieces.add(p);
+		
+		// Horse
+		p = new Horse(cells, 1, 0);
+		grid[1] = p;
+		enemyPieces.add(p);
+		p = new Horse(cells, 6, 0);
+		grid[6] = p;
+		enemyPieces.add(p);
+		
+		// Knight
+		p = new Knight(cells, 2, 0);
+		grid[2] = p;
+		enemyPieces.add(p);
+		p = new Knight(cells, 5, 0);
+		grid[5] = p;
+		enemyPieces.add(p);
+		
+		// Queen
+		p = new Queen(cells, 3, 0);
+		grid[3] = p;
+		enemyPieces.add(p);
+		
+		// King
+		p = new King(cells, 4, 0);
+		grid[4] = p;
+		enemyPieces.add(p);
 
 		// peasants
 		for(int i = 0; i < grid.length; i++){
 			if(i <= (cells * 2) - 1 && i >= cells || i >= (cells * 6) && i <= (cells * 7) - 1 ){
-				
 				
 				if(i < grid.length / 2){
 					//enemy pieces type is 0
@@ -57,81 +85,46 @@ public class Logic{
 				}
 			}
 		}
+														//Player pieces 
+		// Tower
+		p = new Tower(cells, 56, 1);
+		grid[56] = p;
+		playerPieces.add(p);
+		p = new Tower(cells, 63, 1);
+		grid[63] = p;
+		playerPieces.add(p);
+		
+		// Horse
+		p = new Horse(cells, 57, 1);
+		grid[57] = p;
+		playerPieces.add(p);
+		p = new Horse(cells, 62, 1);
+		grid[62] = p;
+		playerPieces.add(p);
+		
+		// Knight
+		p = new Knight(cells, 58, 1);
+		grid[58] = p;
+		playerPieces.add(p);
+		p = new Knight(cells, 61, 1);
+		grid[61] = p;
+		playerPieces.add(p);
+		
+		// Queen
+		p = new Queen(cells, 60, 1);
+		grid[60] = p;
+		playerPieces.add(p);
+		
+		// King
+		p = new King(cells, 59, 1);
+		grid[59] = p;
+		playerPieces.add(p);
 	}
 	
-	// Take input from the player, variables needed for value controll
-	static Scanner userInput = new Scanner(System.in);
-	static Random rand = new Random();
-	static int pos, dest;
-	static boolean checker;
-	
-	private static void getPlayerMove(){
-		checker = true;
-		do {
-			try { // for NumberFormatException
-				// show the available options and get the selected piece
-				System.out.print("Available options: ");
-				for (int i = 0; i < playerPieces.size(); i++){
-					System.out.print(playerPieces.get(i).getPosition() + ", ");
-				}
-				
-				//get user input
-				System.out.println();
-				System.out.print("Enter piece position: ");
-				pos = Integer.parseInt(userInput.next());
-				
-				// if there is no piece at given position
-				try {
-					if (!playerPieces.contains(grid[pos])) throw new ArrayIndexOutOfBoundsException();
-					
-				} catch (ArrayIndexOutOfBoundsException e){
-					System.out.println("Position is outside of the board!");
-					checker = false;
-					continue;				
-				}
-				
-				// if there are no available moves that selected piece can make
-				try {
-					if (grid[pos].getValidMoves(grid).size() == 0) throw new ArrayIndexOutOfBoundsException();				
-				
-				} catch(ArrayIndexOutOfBoundsException e){
-					System.out.println("This piece cannot move further!");
-					checker = false;
-					continue;
-				}
-				
-				//Show the available destinations, get the destination of the selected piece
-				System.out.println("Avaliable moves are: " + grid[pos].getValidMoves(grid));
-				System.out.print("Enter piece destination: ");
-				dest = Integer.parseInt(userInput.next());
-				
-				// if the input destination is not in the available moves: loop
-				if (!(grid[pos].getValidMoves(grid).contains(dest))){
-					System.out.println("Invalid destination! Pick again!");
-					checker = false;
-					continue;
-				} else checker = true;
-			}catch(NumberFormatException e){
-				System.out.println("Enter only numbers!");
-				checker = false;
-				continue;
-			}
-				
-		}while(!checker);
-		// Make the move
-		grid[pos].makeMove(dest);
-		
-		// if an enemy is at the destination, remove it
-		if(grid[dest] != null && grid[dest].getType() == 0){
-			enemyPieces.remove(grid[dest]);
-		}
-	
-	}// end of getPLayerMove
 	
 	
 	// the AI controll
 	private static void getCompMove(){
-		
 		
 		/* AI algorithm
 		 * 
@@ -143,15 +136,15 @@ public class Logic{
 		 
 		 4. if (!(grid[pos].getValidMoves(grid).contains(dest))) throw new ArrayIndexOutOfBoundsException();
 		 
-		 
 		 */
+		
 		// enemiesCopy is used to reduce load time for ai
 		@SuppressWarnings("rawtypes")
 		ArrayList<Piece> enemiesCopy = new ArrayList<Piece>(enemyPieces);
-		System.out.println("Computers turn!");
+		System.out.println("Computers turn! Pieces: " + enemyPieces);
 		do {
 			checker = true;
-			// Select a random piece
+														//1: Select a random piece
 			
 			try {// IllegalArgumentException will appear if size = 0
 				System.out.println(enemiesCopy.size());
@@ -163,25 +156,28 @@ public class Logic{
 				break;
 			}
 			
-			// if there are no available moves: loop
+														//2: if there are no available moves: loop
 			try {
 				if (grid[pos].getValidMoves(grid).size() == 0) throw new ArrayIndexOutOfBoundsException();
 				System.out.println(grid[pos].getValidMoves(grid));
-			
 			} catch (ArrayIndexOutOfBoundsException e){	
+				
 				System.out.println(pos + " " + dest);
 				enemiesCopy.remove(grid[pos]);
 				checker = false;
 				continue;
 				
 			} catch (NullPointerException e1){
+				System.out.println("something went wrong with pos: " + pos);
+				//System.exit(0);
 				e1.printStackTrace();
+				continue;
 			}
 			
-			// Select random destination of given moves
+														//3: Select random destination of given moves
 			dest = (int) grid[pos].getValidMoves(grid).get(rand.nextInt(grid[pos].getValidMoves(grid).size()));
 						
-			// if the input destination is not in the available moves: loop
+														//4: if the input destination is not in the available moves: loop
 			try {
 				if (!(grid[pos].getValidMoves(grid).contains(dest))) throw new ArrayIndexOutOfBoundsException();				
 			} catch(ArrayIndexOutOfBoundsException e){
@@ -196,22 +192,31 @@ public class Logic{
 		if (dest != -1 && grid[dest] != null && grid[dest].getType() == 1){
 			playerPieces.remove(grid[dest]);
 		}
-		
 	}// end of getCompMove
 	
-	
-	
 	// game will run here
+	
+	static boolean playerTurn = true;
 	private static void beginGame(){
 		fillGrid();
+		frame.addKeyListener(key);
+		frame.setFocusable(true);
 		while(true){
-			printGrid();
-			frame.setBoard(grid);
 			frame.repaint();
 			frame.revalidate();
-			getPlayerMove();
-			printGrid();
-			getCompMove();
+			frame.setBoard(grid);
+			frame.setX(x);
+			frame.setY(y);
+			if(key.getKeys()[(int) 'n'] == true){
+				fillGrid();
+				playerTurn = true;
+			}
+			updateGrid();
+			if(!playerTurn){
+				getCompMove();				
+				playerTurn = true;
+			}
+			updateGrid();
 		}
 	}
 	
@@ -221,6 +226,61 @@ public class Logic{
 		playerPieces = new ArrayList<Piece>();
 		enemyPieces = new  ArrayList<Piece>();
 		frame = new Frame(cells, grid);
+		
+		frame.addMouseMotionListener(new MouseMotionAdapter() {
+			public void mouseMoved(MouseEvent e){
+				x = e.getX();
+				y = e.getY();
+			}
+		});
+													// Player input comes from mouse-events
+		frame.addMouseListener(new MouseAdapter() {
+			boolean playerSelected = false;
+			int SelectedPlayer = -1;
+			
+			public void mouseExited(MouseEvent e){
+				x = frame.getHeight();
+				y = frame.getWidth();
+			}
+			public void mouseClicked(MouseEvent e){
+				index = (x / (frame.getWidth() / cells)) + (y / (frame.getHeight()/ cells)) * cells;
+													// right-click
+				if(e.getButton() == 3){
+					frame.clearMoves();
+					playerSelected = false;
+				}				
+													// Choose player and give frame info to draw
+				if (!playerSelected && playerTurn){
+					if(grid[index] != null){
+						frame.setMoves(grid[index].getValidMoves(grid));
+						SelectedPlayer = index;
+						playerSelected = true;
+					}else{
+													// If the wrong cell is picked, remove info from frame
+						frame.clearMoves();
+					}
+					
+				}else if (playerSelected && playerTurn){
+					try{
+						if (grid[SelectedPlayer].getValidMoves(grid).contains(index)){
+													// remove enemy piece from memory if they clash!
+							if (grid[SelectedPlayer].isEnemyAt(index, grid)){
+								enemyPieces.remove(grid[index]);
+							}
+							
+							grid[SelectedPlayer].makeMove(index);
+							playerTurn = false;
+						}
+						
+					}catch(NullPointerException e1){
+						System.out.println(SelectedPlayer);
+					}
+					
+					playerSelected = false;
+					frame.clearMoves();
+				}
+			}
+		});
 		beginGame();
 	}
 }

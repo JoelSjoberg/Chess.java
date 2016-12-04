@@ -1,4 +1,5 @@
 
+import java.awt.Image;
 import java.util.ArrayList;
 
 /**
@@ -16,5 +17,6 @@ public interface Piece<T> {
 	void makeMove(int destination);
 	int getType();
 	int getPosition();
+	Image getImage();
 	void setPosition(int pos);
 }
