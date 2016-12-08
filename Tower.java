@@ -12,7 +12,10 @@ public class Tower implements Piece<Object>{
 	private int type;
 	private Image ally;
 	private Image enemy;
-	boolean up, down, right, left;
+	int numDirections = 4;
+	ArrayList<Integer> availableMoves;
+	ArrayList<Integer> equation;
+	ArrayList<Boolean> direction;
 	
 	public Tower(int c, int pos, int t){
 		cells = c;
@@ -44,110 +47,42 @@ public class Tower implements Piece<Object>{
 
 	@Override
 	public ArrayList getValidMoves(Piece[] board) {
-		ArrayList<Integer> availableMoves = new ArrayList<Integer>();
-		up = true;
-		down = true;
-		left = true;
-		right = true;
-		
-		for(int i = 1; i <= cells; i++){
-			if (up && position - (cells * i) > -1){
-				if(board[position - (cells * i)] != null && board[position - (cells * i)].getType() == this.type){
-					up = false;
-				}
-				else if (isEnemyAt(position - (cells * i), board)){
-					up = false;
-					availableMoves.add(position - (cells * i));					
-				}else{
-					availableMoves.add(position - (cells * i));
-				}
-			}
-			
-			if (down && position + (i * cells) < cells * cells - 1){
-				if(board[position + (cells * i)] != null && board[position + (cells * i)].getType() == this.type){
-					down = false;
-				}
-				else if (isEnemyAt(position + (cells * i), board)){
-					down = false;
-					availableMoves.add(position + (cells * i));					
-				}else{
-					availableMoves.add(position + (cells * i));
-				}
-			}
-			
-			if (left){
-// TODO: make edge cases work
-				// if piece is on the left edge	or left is outside board  or  (cell to left has a piece	and	that piece is your piece)
-				if((position - (i - 1)) % cells == 0 || position - i < 0 ||(board[position - i] != null && board[position - i].getType() == this.type)){
-					left = false;
-				}
-				else if (isEnemyAt(position - i, board)){
-					left = false;
-					availableMoves.add(position - i);					
-				}else{
-					availableMoves.add(position - i);
-				}
-			}
-			
-			if (right){
-				if ((position + (i - 1) + 1) % cells == 0 || position + i > cells * cells || (board[position + i] != null && board[position + i].getType() == this.type)){
-					right = false;
-				}
-				else if (isEnemyAt(position + i, board)){
-					right = false;
-					availableMoves.add(position + i);
-				}else{
-					availableMoves.add(position + i);
-				}
-			}
+		availableMoves = new ArrayList<Integer>();	
+		direction = new ArrayList<Boolean>();
+		for(int i = 0; i < numDirections; i++){
+			direction.add(true);
 		}
-		return availableMoves;
 		
-		/*for(int i = 0; i < cells; i++){
-			// look upwards on the board
-			try{
-				if((board[position - cells * i] == null || isEnemyAt(position - cells * i, board)) && up){
-					availableMoves.add(position - cells * i);
-					if(isEnemyAt(position - cells * i, board)) up = false;
-					if(board[position + cells * i] == null) up = false;
-				}
-			}catch(ArrayIndexOutOfBoundsException e) {
-				up = false;
-			}
+		for(int i = 1; i < cells; i++){
+			equation = new ArrayList<Integer>();
+			// up
+			equation.add(position - (cells * i));
+			// down
+			equation.add(position + (cells * i));
+			// Left
+			equation.add(position - i);
+			// right
+			equation.add(position + i);
 			
-			// look downwards on the board
-			try{
-				if((board[position + cells * i] == null || isEnemyAt(position + cells * i, board)) && down){
-					availableMoves.add(position + cells * i);
-				}
-			}catch(ArrayIndexOutOfBoundsException e) {
-				down = false;
-			}
-			
-			// look to the left on the board
-			try{
-				if(((board[position - i] == null || isEnemyAt(position - i, board))) && left){
-					if(position - i % cells - 1 != 0){
-						left = false;
-					}else{
-						availableMoves.add(position - i);						
+			for (int j = 0; j < direction.size(); j++){
+				if (direction.get(j) && equation.get(j) > -1 && equation.get(j) < cells * cells){
+					if (board[equation.get(j)] != null && board[equation.get(j)].getType() == this.type){
+						direction.set(j, false);
+					}else if(equation.get(j) == position - i && equation.get(j) % cells == 7){
+						direction.set(j, false);
+					}else if(equation.get(j) == position + i && equation.get(j) % cells == 0){
+						direction.set(j, false);
+					}else if (isEnemyAt(equation.get(j), board)){
+						direction.set(j, false);
+						availableMoves.add(equation.get(j));					
+					}else {
+						availableMoves.add(equation.get(j));
 					}
 				}
-			}catch(ArrayIndexOutOfBoundsException e) {
-				left = false;
-			}
-			
-			// look to the right on the board
-			try{
-				if(((board[position + i] == null || isEnemyAt(position + i, board)) && position + i % cells != 0) && right){
-					availableMoves.add(position + i);
-				}
-			}catch(ArrayIndexOutOfBoundsException e) {
-				right = false;
 			}
 		}
+		
 		return availableMoves;
-		*/
 	}
 
 	

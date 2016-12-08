@@ -1,4 +1,3 @@
-
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -12,6 +11,7 @@ public class Keyboard implements KeyListener{
 	@Override
 	public void keyPressed(KeyEvent e) {
 		keys[e.getKeyCode()] = true;
+		System.out.println(e.getKeyCode());
 	}
 
 	@Override

@@ -1,7 +1,9 @@
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -19,6 +21,8 @@ public class Frame extends JPanel{
 	JFrame frame;
 	Piece[] board;
 	int boxX, boxY;
+	float alpha = 0.8f;
+	float alphaCounter = 0.0003f;
 	ArrayList<Integer> availableMoves = new ArrayList<Integer>();
 	
 	public Frame(int c, Piece[] b){
@@ -41,12 +45,18 @@ public class Frame extends JPanel{
 	protected void paintComponent(Graphics g){
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g;
+		RenderingHints rh = new RenderingHints(
+	             RenderingHints.KEY_TEXT_ANTIALIASING,
+	             RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2.setRenderingHints(rh);
 		cellWidth = frame.getWidth() / cells - 2;
 		cellHeight = frame.getHeight() / cells - 5;
 		
-		g2.setColor(new Color(245,184,0));
+		//g2.setColor(new Color(245,184,0));
+		g2.setColor(Color.decode("#FFFFFF"));
 		g2.fillRect(0, 0, getWidth(), getHeight());
-		g2.setColor(new Color(184,138,0));
+		g2.setColor(Color.decode("#BCBABE"));
+		//g2.setColor(new Color(184,138,0));
 		
 															// DRAW THE BOARD
 		for(int y = 0; y < getHeight(); y += cellHeight * 2){
@@ -60,15 +70,26 @@ public class Frame extends JPanel{
 			}			
 		}
 		
+// REMOVE ALPHA COUNTING IF ANNOYING!
+		
+		alpha += alphaCounter;
+		if(alpha > 0.9f || alpha < 0.3f) alphaCounter = alphaCounter * -1;
+		
 		// show available moves
-		g2.setColor(Color.blue);
+		g2.setComposite(AlphaComposite.getInstance(
+                AlphaComposite.SRC_OVER, alpha));
+		g2.setColor(Color.decode("#FF0038"));
 		for(int i = 0; i < availableMoves.size(); i++){
+			if(board[availableMoves.get(i)] != null) g2.setColor(Color.ORANGE);
 			boxX = (availableMoves.get(i) % cells) * cellWidth;
 			boxY = availableMoves.get(i) / cells * cellHeight;
 			g2.fillRect(boxX, boxY, cellWidth, cellHeight);
+			g2.setColor(Color.decode("#FF0038"));
 		}
+		g2.setComposite(AlphaComposite.getInstance(
+                AlphaComposite.SRC_OVER, 1.0f));
 															// show where the player is
-		g2.setColor(Color.CYAN);
+		g2.setColor(Color.decode("#257985"));
 		g2.fillRect(selectorX, selectorY, cellWidth, cellHeight);
 		
 															// draw the pieces on the board

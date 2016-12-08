@@ -12,6 +12,7 @@ public class King implements Piece{
 	private int type;
 	private Image ally;
 	private Image enemy;
+	ArrayList<Integer> availableMoves = new ArrayList<Integer>();
 	
 	public King(int c, int pos, int t){
 		cells = c;
@@ -26,8 +27,7 @@ public class King implements Piece{
 			enemy = ImageIO.read(new File("src/img/ke.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		
+		}		
 	}
 	
 	@Override
@@ -43,8 +43,30 @@ public class King implements Piece{
 
 	@Override
 	public ArrayList getValidMoves(Piece[] board) {
-		ArrayList<Integer> availableMoves = new ArrayList<Integer>();
-		System.out.println("Feature will be added");
+		availableMoves = new ArrayList<Integer>();
+		
+		if(position % cells != 0){
+			availableMoves.add(position - 1);
+			availableMoves.add(position - cells - 1);
+			availableMoves.add(position + cells - 1);			
+		}
+		if((position + 1) % cells != 0){
+			availableMoves.add(position - cells + 1);
+			availableMoves.add(position + 1);
+			availableMoves.add(position + cells + 1);			
+		}
+		
+		availableMoves.add(position - cells);
+		availableMoves.add(position + cells);
+		
+		for(int i = availableMoves.size() - 1; i > -1; i--){
+			if(!(availableMoves.get(i) < cells * cells && availableMoves.get(i) > -1)){
+				availableMoves.remove(i);
+			}else if(board[availableMoves.get(i)] != null && board[availableMoves.get(i)].getType() == this.type){
+				availableMoves.remove(i);
+			}
+		}
+		
 		return availableMoves;
 	}
 	

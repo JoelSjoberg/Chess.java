@@ -12,6 +12,7 @@ public class Horse implements Piece{
 	private int type;
 	private Image ally;
 	private Image enemy;
+	ArrayList<Integer> availableMoves;
 	
 	public Horse(int c, int pos, int t){
 		cells = c;
@@ -43,7 +44,7 @@ public class Horse implements Piece{
 
 	@Override
 	public ArrayList getValidMoves(Piece[] board) {
-		ArrayList<Integer> availableMoves = new ArrayList<Integer>();
+		availableMoves = new ArrayList<Integer>();
 
 								// furthest to the left
 		if(position % cells > 1){

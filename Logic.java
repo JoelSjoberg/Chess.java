@@ -249,35 +249,38 @@ public class Logic{
 					frame.clearMoves();
 					playerSelected = false;
 				}				
-													// Choose player and give frame info to draw
-				if (!playerSelected && playerTurn){
-					if(grid[index] != null){
-						frame.setMoves(grid[index].getValidMoves(grid));
-						SelectedPlayer = index;
-						playerSelected = true;
-					}else{
-													// If the wrong cell is picked, remove info from frame
-						frame.clearMoves();
-					}
+				else if(e.getButton() == 1){
 					
-				}else if (playerSelected && playerTurn){
-					try{
-						if (grid[SelectedPlayer].getValidMoves(grid).contains(index)){
-													// remove enemy piece from memory if they clash!
-							if (grid[SelectedPlayer].isEnemyAt(index, grid)){
-								enemyPieces.remove(grid[index]);
-							}
-							
-							grid[SelectedPlayer].makeMove(index);
-							playerTurn = false;
+													// Choose player and give frame info to draw
+					if (!playerSelected && playerTurn){
+						if(grid[index] != null){
+							frame.setMoves(grid[index].getValidMoves(grid));
+							SelectedPlayer = index;
+							playerSelected = true;
+						}else{
+													// If the wrong cell is picked, remove info from frame
+							frame.clearMoves();
 						}
 						
-					}catch(NullPointerException e1){
-						System.out.println(SelectedPlayer);
+					}else if (playerSelected && playerTurn){
+						try{
+							if (grid[SelectedPlayer].getValidMoves(grid).contains(index)){
+														// remove enemy piece from memory if they clash!
+								if (grid[SelectedPlayer].isEnemyAt(index, grid)){
+									enemyPieces.remove(grid[index]);
+								}
+								
+								grid[SelectedPlayer].makeMove(index);
+								playerTurn = false;
+							}
+							
+						}catch(NullPointerException e1){
+							System.out.println(SelectedPlayer);
+						}
+						
+						playerSelected = false;
+						frame.clearMoves();
 					}
-					
-					playerSelected = false;
-					frame.clearMoves();
 				}
 			}
 		});
