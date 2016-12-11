@@ -24,6 +24,7 @@ public class Frame extends JPanel{
 	float alpha = 0.8f;
 	float alphaCounter = 0.0003f;
 	ArrayList<Integer> availableMoves = new ArrayList<Integer>();
+	private static Keyboard key = new Keyboard();
 	
 	public Frame(int c, Piece[] b){
 		cells = c;
@@ -36,6 +37,7 @@ public class Frame extends JPanel{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		frame.setTitle("Press 'n' to start new game");
+		frame.addKeyListener(key);
 		frame.setVisible(true);
 		selectorX = getWidth();
 		selectorY = getHeight();
@@ -56,8 +58,6 @@ public class Frame extends JPanel{
 		g2.setColor(Color.decode("#FFFFFF"));
 		g2.fillRect(0, 0, getWidth(), getHeight());
 		g2.setColor(Color.decode("#BCBABE"));
-		//g2.setColor(new Color(184,138,0));
-		
 															// DRAW THE BOARD
 		for(int y = 0; y < getHeight(); y += cellHeight * 2){
 			for(int x = 0; x < getWidth(); x += cellWidth * 2){
@@ -73,11 +73,10 @@ public class Frame extends JPanel{
 // REMOVE ALPHA COUNTING IF ANNOYING!
 		
 		alpha += alphaCounter;
-		if(alpha > 0.9f || alpha < 0.3f) alphaCounter = alphaCounter * -1;
+		if(alpha > 0.8f || alpha < 0.3f) alphaCounter = alphaCounter * -1;
 		
 		// show available moves
-		g2.setComposite(AlphaComposite.getInstance(
-                AlphaComposite.SRC_OVER, alpha));
+		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
 		g2.setColor(Color.decode("#FF0038"));
 		for(int i = 0; i < availableMoves.size(); i++){
 			if(board[availableMoves.get(i)] != null) g2.setColor(Color.ORANGE);
@@ -100,7 +99,6 @@ public class Frame extends JPanel{
 			}
 		}
 	}
-	
 	public void setBoard(Piece[] b){this.board = b;}
 	public void setX(int x) {selectorX = (x / cellWidth) * cellWidth;}
 	public void setY(int y) {selectorY = (y / cellHeight) * cellHeight;}

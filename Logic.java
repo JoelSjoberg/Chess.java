@@ -12,10 +12,13 @@ public class Logic{
 	private static int cells;
 	private static Frame frame;
 	private static int x, y, index;
-	private static Keyboard key = new Keyboard();
 	static Random rand = new Random();
 	static int pos = -1, dest = -1;
 	static boolean checker;
+	private static Keyboard key = new Keyboard();
+	private static Piece enemyKing;
+	private static Piece playerKing;
+	private static Ai ai;
 	
 	private static void updateGrid(){
 		// update the whole grid before printing
@@ -29,6 +32,9 @@ public class Logic{
 	
 	// fill the grid with pieces at the beginning of the game
 	private static void fillGrid(){
+		for(int i = 0; i < cells*cells; i++){
+			grid[i] = null;
+		}
 		enemyPieces = new ArrayList<Piece>();
 		playerPieces = new ArrayList<Piece>();
 		Piece p;
@@ -63,10 +69,12 @@ public class Logic{
 		enemyPieces.add(p);
 		
 		// King
+		
 		p = new King(cells, 4, 0);
 		grid[4] = p;
 		enemyPieces.add(p);
-
+		enemyKing = p;
+		
 		// peasants
 		for(int i = 0; i < grid.length; i++){
 			if(i <= (cells * 2) - 1 && i >= cells || i >= (cells * 6) && i <= (cells * 7) - 1 ){
@@ -119,10 +127,11 @@ public class Logic{
 		p = new King(cells, 59, 1);
 		grid[59] = p;
 		playerPieces.add(p);
+		playerKing = p;
 	}
 	
 	
-	
+	/*
 	// the AI controll
 	private static void getCompMove(){
 		
@@ -136,22 +145,22 @@ public class Logic{
 		 
 		 4. if (!(grid[pos].getValidMoves(grid).contains(dest))) throw new ArrayIndexOutOfBoundsException();
 		 
-		 */
+
 		
 		// enemiesCopy is used to reduce load time for ai
 		@SuppressWarnings("rawtypes")
 		ArrayList<Piece> enemiesCopy = new ArrayList<Piece>(enemyPieces);
-		System.out.println("Computers turn! Pieces: " + enemyPieces);
+		//System.out.println("Computers turn! Pieces: " + enemyPieces);
 		do {
 			checker = true;
 														//1: Select a random piece
 			
 			try {// IllegalArgumentException will appear if size = 0
-				System.out.println(enemiesCopy.size());
+				//System.out.println(enemiesCopy.size());
 				pos = enemiesCopy.get(rand.nextInt(enemiesCopy.size())).getPosition();								
 			
 			} catch(IllegalArgumentException e){
-				System.out.println("AI cannot make any moves");
+				//System.out.println("AI cannot make any moves");
 				pos = -1; dest = -1;
 				break;
 			}
@@ -159,10 +168,10 @@ public class Logic{
 														//2: if there are no available moves: loop
 			try {
 				if (grid[pos].getValidMoves(grid).size() == 0) throw new ArrayIndexOutOfBoundsException();
-				System.out.println(grid[pos].getValidMoves(grid));
+				//System.out.println(grid[pos].getValidMoves(grid));
 			} catch (ArrayIndexOutOfBoundsException e){	
 				
-				System.out.println(pos + " " + dest);
+				//System.out.println(pos + " " + dest);
 				enemiesCopy.remove(grid[pos]);
 				checker = false;
 				continue;
@@ -186,39 +195,46 @@ public class Logic{
 				continue;	
 			}
 			grid[pos].makeMove(dest);
-			System.out.println("The opponent moved " + pos + " to " + dest);
+			//System.out.println("The opponent moved " + pos + " to " + dest);
 		} while (!checker);
 		
 		if (dest != -1 && grid[dest] != null && grid[dest].getType() == 1){
 			playerPieces.remove(grid[dest]);
-		}
 	}// end of getCompMove
+		}*/
 	
 	// game will run here
 	
 	static boolean playerTurn = true;
 	private static void beginGame(){
 		fillGrid();
-		frame.addKeyListener(key);
-		frame.setFocusable(true);
-		while(true){
+		ai = new Ai();
+		while(playerPieces.contains(playerKing) && enemyPieces.contains(enemyKing)){
+			// TODO: make player loose when king is dead!
+			//System.out.println(playerPieces.contains(playerKing));
+			
 			frame.repaint();
 			frame.revalidate();
 			frame.setBoard(grid);
 			frame.setX(x);
 			frame.setY(y);
-			if(key.getKeys()[(int) 'n'] == true){
+			if(key.getKeys()[78] == true){
 				fillGrid();
 				playerTurn = true;
 			}
 			updateGrid();
 			if(!playerTurn){
-				getCompMove();				
+				ai.getMove(grid, enemyPieces, playerPieces);			
 				playerTurn = true;
 			}
 			updateGrid();
 		}
+		if(playerPieces.contains(playerKing)) System.out.println("You Win!");
+		else{
+			System.out.println("Computer Wins!");
+		}
 	}
+	
 	
 	public static void main(String args[]){
 		cells = 8;
@@ -242,6 +258,7 @@ public class Logic{
 				x = frame.getHeight();
 				y = frame.getWidth();
 			}
+			
 			public void mouseClicked(MouseEvent e){
 				index = (x / (frame.getWidth() / cells)) + (y / (frame.getHeight()/ cells)) * cells;
 													// right-click
@@ -253,7 +270,7 @@ public class Logic{
 					
 													// Choose player and give frame info to draw
 					if (!playerSelected && playerTurn){
-						if(grid[index] != null){
+						if(grid[index] != null && grid[index].getType() == 1){
 							frame.setMoves(grid[index].getValidMoves(grid));
 							SelectedPlayer = index;
 							playerSelected = true;
@@ -272,12 +289,10 @@ public class Logic{
 								
 								grid[SelectedPlayer].makeMove(index);
 								playerTurn = false;
-							}
-							
+							}	
 						}catch(NullPointerException e1){
 							System.out.println(SelectedPlayer);
 						}
-						
 						playerSelected = false;
 						frame.clearMoves();
 					}

@@ -3,15 +3,14 @@ import java.awt.event.KeyListener;
 
 public class Keyboard implements KeyListener{
 	
-	private boolean[] keys = new boolean[128];
+	public static boolean[] keys = new boolean[128];
 	
 	public boolean[] getKeys(){
-		return this.keys;
+		return Keyboard.keys;
 	}
 	@Override
 	public void keyPressed(KeyEvent e) {
 		keys[e.getKeyCode()] = true;
-		System.out.println(e.getKeyCode());
 	}
 
 	@Override
@@ -21,6 +20,5 @@ public class Keyboard implements KeyListener{
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
-		// TODO Auto-generated method stub	
 	}
 }
