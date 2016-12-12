@@ -2,6 +2,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
+// Version 2.0
+/*
+ 	AI will kill player pieces if available
+ 	else it will make a random move
+
+ */
+
+
 public class Ai {
 	
 	int pos;
@@ -27,6 +35,7 @@ public class Ai {
 				if(enemies.get(i).isEnemyAt(dest, board)){
 					if(allies.contains(board[dest]))allies.remove(board[dest]);
 					enemies.get(i).makeMove(dest);
+					System.out.println("COMP: " + pos+  " - " + dest);
 					return;
 				}
 			}
@@ -48,9 +57,10 @@ public class Ai {
 			}else{
 				dest = (int) board[pos].getValidMoves(board).get(rand.nextInt(board[pos].getValidMoves(board).size()));
 			}
-			System.out.println("try to move " + pos+  " to " + dest);
+			System.out.println("COMP: " + pos+  " - " + dest);
 			if(allies.contains(board[dest]))allies.remove(board[dest]);
 			board[pos].makeMove(dest);
+			return;
 		}	
 	}
 }

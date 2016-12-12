@@ -21,7 +21,7 @@ public class Logic{
 	private static Ai ai;
 	
 	private static void updateGrid(){
-		// update the whole grid before printing
+		// update the whole grid before drawing
 		for(int i = 0; i < grid.length; i++){
 			if(grid[i] != null && grid[i].getPosition() != i){
 				grid[grid[i].getPosition()] = grid[i];
@@ -130,79 +130,6 @@ public class Logic{
 		playerKing = p;
 	}
 	
-	
-	/*
-	// the AI controll
-	private static void getCompMove(){
-		
-		/* AI algorithm
-		 * 
-		 1. pos = enemiesCopy.get(rand.nextInt(enemiesCopy.size())).getPosition();		
-		 
-		 2. if (grid[pos].getValidMoves(grid).size() == 0) throw new ArrayIndexOutOfBoundsException();
-
-		 3. dest = (int) grid[pos].getValidMoves(grid).get(rand.nextInt(grid[pos].getValidMoves(grid).size()));
-		 
-		 4. if (!(grid[pos].getValidMoves(grid).contains(dest))) throw new ArrayIndexOutOfBoundsException();
-		 
-
-		
-		// enemiesCopy is used to reduce load time for ai
-		@SuppressWarnings("rawtypes")
-		ArrayList<Piece> enemiesCopy = new ArrayList<Piece>(enemyPieces);
-		//System.out.println("Computers turn! Pieces: " + enemyPieces);
-		do {
-			checker = true;
-														//1: Select a random piece
-			
-			try {// IllegalArgumentException will appear if size = 0
-				//System.out.println(enemiesCopy.size());
-				pos = enemiesCopy.get(rand.nextInt(enemiesCopy.size())).getPosition();								
-			
-			} catch(IllegalArgumentException e){
-				//System.out.println("AI cannot make any moves");
-				pos = -1; dest = -1;
-				break;
-			}
-			
-														//2: if there are no available moves: loop
-			try {
-				if (grid[pos].getValidMoves(grid).size() == 0) throw new ArrayIndexOutOfBoundsException();
-				//System.out.println(grid[pos].getValidMoves(grid));
-			} catch (ArrayIndexOutOfBoundsException e){	
-				
-				//System.out.println(pos + " " + dest);
-				enemiesCopy.remove(grid[pos]);
-				checker = false;
-				continue;
-				
-			} catch (NullPointerException e1){
-				System.out.println("something went wrong with pos: " + pos);
-				//System.exit(0);
-				e1.printStackTrace();
-				continue;
-			}
-			
-														//3: Select random destination of given moves
-			dest = (int) grid[pos].getValidMoves(grid).get(rand.nextInt(grid[pos].getValidMoves(grid).size()));
-						
-														//4: if the input destination is not in the available moves: loop
-			try {
-				if (!(grid[pos].getValidMoves(grid).contains(dest))) throw new ArrayIndexOutOfBoundsException();				
-			} catch(ArrayIndexOutOfBoundsException e){
-				System.out.println("problem with Dest");
-				checker = false;
-				continue;	
-			}
-			grid[pos].makeMove(dest);
-			//System.out.println("The opponent moved " + pos + " to " + dest);
-		} while (!checker);
-		
-		if (dest != -1 && grid[dest] != null && grid[dest].getType() == 1){
-			playerPieces.remove(grid[dest]);
-	}// end of getCompMove
-		}*/
-	
 	// game will run here
 	
 	static boolean playerTurn = true;
@@ -210,8 +137,6 @@ public class Logic{
 		fillGrid();
 		ai = new Ai();
 		while(playerPieces.contains(playerKing) && enemyPieces.contains(enemyKing)){
-			// TODO: make player loose when king is dead!
-			//System.out.println(playerPieces.contains(playerKing));
 			
 			frame.repaint();
 			frame.revalidate();
@@ -286,7 +211,7 @@ public class Logic{
 								if (grid[SelectedPlayer].isEnemyAt(index, grid)){
 									enemyPieces.remove(grid[index]);
 								}
-								
+								System.out.println("Player: " + SelectedPlayer + " - " + index);
 								grid[SelectedPlayer].makeMove(index);
 								playerTurn = false;
 							}	
@@ -299,6 +224,9 @@ public class Logic{
 				}
 			}
 		});
-		beginGame();
+		while(true){
+			beginGame();
+			
+		}
 	}
 }

@@ -36,6 +36,7 @@ public class Frame extends JPanel{
 		frame.setSize(new Dimension(width, height));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
+		frame.setMinimumSize(new Dimension(100, 100));
 		frame.setTitle("Press 'n' to start new game");
 		frame.addKeyListener(key);
 		frame.setVisible(true);
@@ -54,7 +55,6 @@ public class Frame extends JPanel{
 		cellWidth = frame.getWidth() / cells - 2;
 		cellHeight = frame.getHeight() / cells - 5;
 		
-		//g2.setColor(new Color(245,184,0));
 		g2.setColor(Color.decode("#FFFFFF"));
 		g2.fillRect(0, 0, getWidth(), getHeight());
 		g2.setColor(Color.decode("#BCBABE"));
