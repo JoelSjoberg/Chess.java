@@ -19,12 +19,12 @@ public class King implements Piece{
 		position = pos;
 		type = t;
 		try {
-			ally = ImageIO.read(new File("src/img/ka.png"));
+			ally = ImageIO.read(getClass().getResource("/ka.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		try {
-			enemy = ImageIO.read(new File("src/img/ke.png"));
+			enemy = ImageIO.read(getClass().getResource("/ke.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}		

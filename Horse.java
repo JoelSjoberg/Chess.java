@@ -19,12 +19,12 @@ public class Horse implements Piece{
 		position = pos;
 		type = t;
 		try {
-			ally = ImageIO.read(new File("src/img/ha.png"));
+			ally = ImageIO.read(getClass().getResource("/ha.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		try {
-			enemy = ImageIO.read(new File("src/img/he.png"));
+			enemy = ImageIO.read(getClass().getResource("/he.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

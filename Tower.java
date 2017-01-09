@@ -22,12 +22,12 @@ public class Tower implements Piece<Object>{
 		position = pos;
 		type = t;
 		try {
-			ally = ImageIO.read(new File("src/img/ta.png"));
+			ally = ImageIO.read(getClass().getResource("/ta.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		try {
-			enemy = ImageIO.read(new File("src/img/te.png"));
+			enemy = ImageIO.read(getClass().getResource("/te.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

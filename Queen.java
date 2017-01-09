@@ -25,12 +25,12 @@ public class Queen implements Piece{
 		position = pos;
 		type = t;
 		try {
-			ally = ImageIO.read(new File("src/img/qa.png"));
+			ally = ImageIO.read(getClass().getResource("/qa.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		try {
-			enemy = ImageIO.read(new File("src/img/qe.png"));
+			enemy = ImageIO.read(getClass().getResource("/qe.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

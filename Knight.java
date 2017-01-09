@@ -24,12 +24,12 @@ public class Knight implements Piece{
 		position = pos;
 		type = t;
 		try {
-			ally = ImageIO.read(new File("src/img/pa.png"));
+			ally = ImageIO.read(getClass().getResource("/pa.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		try {
-			enemy = ImageIO.read(new File("src/img/pe.png"));
+			enemy = ImageIO.read(getClass().getResource("/pe.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

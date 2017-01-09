@@ -22,12 +22,12 @@ public class Peasant implements Piece<Object>{
 		position = pos;
 		type = t;
 		try {
-			ally = ImageIO.read(new File("src/img/peasanta.png"));
+			ally = ImageIO.read(getClass().getResource("/peasanta.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		try {
-			enemy = ImageIO.read(new File("src/img/peasante.png"));
+			enemy = ImageIO.read(getClass().getResource("/peasante.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
