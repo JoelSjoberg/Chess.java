@@ -70,12 +70,12 @@ public class Frame extends JPanel{
 			}			
 		}
 		
-// REMOVE ALPHA COUNTING IF ANNOYING!
+															// REMOVE ALPHA COUNTING IF ANNOYING!
 		
 		alpha += alphaCounter;
 		if(alpha > 0.8f || alpha < 0.3f) alphaCounter = alphaCounter * -1;
 		
-		// show available moves
+															// show available moves
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
 		g2.setColor(Color.decode("#FF0038"));
 		for(int i = 0; i < availableMoves.size(); i++){
