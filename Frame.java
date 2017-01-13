@@ -22,7 +22,7 @@ public class Frame extends JPanel{
 	Piece[] board;
 	int boxX, boxY;
 	float alpha = 0.8f;
-	float alphaCounter = 0.0003f;
+	float alphaCounter = 0.002f;
 	ArrayList<Integer> availableMoves = new ArrayList<Integer>();
 	private static Keyboard key = new Keyboard();
 	
@@ -73,7 +73,7 @@ public class Frame extends JPanel{
 															// REMOVE ALPHA COUNTING IF ANNOYING!
 		
 		alpha += alphaCounter;
-		if(alpha > 0.8f || alpha < 0.3f) alphaCounter = alphaCounter * -1;
+		if(alpha > 0.8f || alpha < 0.4f) alphaCounter = alphaCounter * -1;
 		
 															// show available moves
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));

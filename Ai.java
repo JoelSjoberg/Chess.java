@@ -19,13 +19,6 @@ public class Ai {
 	Random rand;
 	
 	public void getMove(Piece[] board, ArrayList<Piece> enemies, ArrayList<Piece> allies){
-		 
-		// this should never happen but in case of bug
-		if(enemies.size() == 0){
-			System.out.println("No moves available for computer...");
-			return;
-		}
-		
 		// priority case
 		for (int i = 0; i < enemies.size(); i++){
 			iterator = enemies.get(i).getValidMoves(board).iterator();

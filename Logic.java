@@ -136,30 +136,48 @@ public class Logic{
 	private static void beginGame(){
 		fillGrid();
 		ai = new Ai();
+		
+		int msPerFrame = 5;
+		double prev = System.currentTimeMillis();
+        double lag = 0.0;
+        double current;
+        double elapsed;
+        
+        double fpsTimeBegin = System.currentTimeMillis();
+        double fpsEnd;
 		while(playerPieces.contains(playerKing) && enemyPieces.contains(enemyKing)){
-			
-			frame.repaint();
-			frame.revalidate();
-			frame.setBoard(grid);
-			frame.setX(x);
-			frame.setY(y);
-			if(key.getKeys()[78] == true){
-				fillGrid();
-				playerTurn = true;
-			}
-			updateGrid();
-			if(!playerTurn){
-				ai.getMove(grid, enemyPieces, playerPieces);			
-				playerTurn = true;
-			}
-			updateGrid();
+			current = System.currentTimeMillis();
+            elapsed = current - prev;
+            prev = current;
+            lag += elapsed;
+            
+            		// Render the screen
+            
+            if(lag >= msPerFrame){
+            	frame.repaint();
+            	frame.revalidate();
+            	frame.setBoard(grid);
+            	frame.setX(x);
+            	frame.setY(y);
+            	if(key.getKeys()[78] == true){
+            		fillGrid();
+            		playerTurn = true;
+            	}
+            	updateGrid();
+            	if(!playerTurn){
+            		ai.getMove(grid, enemyPieces, playerPieces);			
+            		playerTurn = true;
+            	}
+            	updateGrid();
+                            	
+                lag -= msPerFrame;
+            } 
 		}
 		if(playerPieces.contains(playerKing)) System.out.println("You Win!");
 		else{
 			System.out.println("Computer Wins!");
 		}
 	}
-	
 	
 	public static void main(String args[]){
 		cells = 8;
